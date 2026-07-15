@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Upload Berkas Reimburse</title>
+<link rel="icon" href="data:,">
+<style>
+  :root {
+    --primary: #2954E4;
+    --bg: #F4F6FB;
+    --surface: #FFFFFF;
+    --text-muted: #6B7280;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    background: var(--bg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    overflow: hidden;
+  }
+
+  /* ------------------------------------------------------------
+   * IFRAME APLIKASI
+   * GANTI nilai src di bawah ini jika suatu saat URL deployment
+   * Apps Script Anda berubah (redeploy versi baru).
+   * ---------------------------------------------------------- */
+  #appFrame {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+    background: var(--bg);
+  }
+
+  /* ------------------------------------------------------------
+   * LOADER — tampil saat iframe masih memuat, hilang otomatis
+   * begitu konten aplikasi selesai load.
+   * ---------------------------------------------------------- */
+  #loader {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    background: var(--bg);
+    z-index: 10;
+    transition: opacity 0.25s ease;
+  }
+  #loader.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .spinner {
+    width: 42px;
+    height: 42px;
+    border: 4px solid #E8EDFD;
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #loader p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+
+  /* ------------------------------------------------------------
+   * FALLBACK — muncul kalau iframe gagal / terlalu lama dimuat
+   * (mis. diblokir oleh pengaturan browser tertentu), supaya
+   * user tetap bisa mengakses aplikasi lewat tautan langsung.
+   * ---------------------------------------------------------- */
+  #fallback {
+    position: fixed;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    background: var(--bg);
+    z-index: 20;
+    padding: 24px;
+    text-align: center;
+  }
+  #fallback.show { display: flex; }
+  #fallback h1 {
+    font-size: 18px;
+    margin: 0;
+    color: #111827;
+  }
+  #fallback p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 14px;
+    max-width: 320px;
+  }
+  #fallback a {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 10px 22px;
+    background: var(--primary);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+  <div id="loader">
+    <div class="spinner"></div>
+    <p>Memuat aplikasi&hellip;</p>
+  </div>
+
+  <div id="fallback">
+    <h1>Aplikasi belum bisa dimuat di sini</h1>
+    <p>Buka langsung lewat tautan di bawah ini.</p>
+    <a id="fallbackLink" href="#" target="_blank" rel="noopener">Buka Aplikasi</a>
+  </div>
+
+  <iframe
+    id="appFrame"
+    src="https://script.google.com/macros/s/AKfycbxvTUWt7Tv0nIsZv6mHAyfDcUh6DbdOcQvCYKpYzimz1CQhCyb_sykuvwPPyTauDH_xdw/exec"
+    title="Upload Berkas Reimburse"
+    allow="clipboard-write"
+  ></iframe>
+
+  <script>
+    var APP_URL = document.getElementById('appFrame').src;
+    document.getElementById('fallbackLink').href = APP_URL;
+
+    var loader = document.getElementById('loader');
+    var fallback = document.getElementById('fallback');
+    var frame = document.getElementById('appFrame');
+    var loaded = false;
+
+    frame.addEventListener('load', function () {
+      loaded = true;
+      loader.classList.add('hidden');
+    });
+
+    // Kalau dalam 10 detik iframe belum juga selesai load (mis. karena
+    // diblokir oleh setting privasi browser tertentu), tampilkan tombol
+    // fallback supaya user tetap bisa membuka aplikasinya langsung.
+    setTimeout(function () {
+      if (!loaded) {
+        fallback.classList.add('show');
+      }
+    }, 10000);
+  </script>
+
+</body>
+</html>
